@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% load crispy_forms_tags %}
+{% block title %}
+    O'chirish - {{product.name}}
+{% endblock title %}
+
+{% block content %}
+    <div class="card">
+        <div class="card-header">
+           <h4> O'chirish - {{product.name}}</h4>
+        </div>
+        <div class="card-body">
+            <form  method="post" enctype="multipart/form-data" >
+                {% csrf_token %}
+                <h4>Siz rostan ham shu mahsulotni o'chirib yubormoqchimisiz?</h4>
+                <p>Ushbu jarayondan mahsulotga tegishli bo'lgan barcha boshqa modelllar ham o'chib ketishi mumkin?</p>
+                <label for="name">Mahsulot nomini kiriting:</label>
+                <input placeholder="{{product.name}}" required type="text" name="product_name" id="name" class="form-control">
+                <div class="buttons mt-3 ">
+                    <button type="submit" class="btn btn-danger"  >O'chirish</button>
+                <a href="{% url 'list' %}" class="btn btn-success" >Qaytish</a>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock content %}

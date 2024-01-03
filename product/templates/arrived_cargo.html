@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% load crispy_forms_tags %}
+{% block title %}
+    Kelgan mahsulotni kiritish
+{% endblock title %}
+
+{% block content %}
+    <style>
+        
+    </style>
+    <div class="card">
+        <div class="card-header">
+           <h4> Kelgan mahsulotlarni kiritish</h4>
+        </div>
+        <div class="card-body">
+            <form  method="post" enctype="multipart/form-data" >
+                {% csrf_token %} {{formset.management_form}}
+                <div class="row">
+                    <h4>Ta'minotchi haqida ma'lumot</h4>
+                    <div class="col-6">
+                        {{form.supplier|as_crispy_field}}
+                    </div>
+                    <div class="col-6">
+                        {{form.type_of_trade|as_crispy_field}}
+                    </div>
+                </div>
+                <hr>
+                    <h4> Olib kelingan mahsulotlar </h4>
+                    <div class="row">
+                        {% for form in formset  %}
+                        <div class="col-md-6">
+                            {{form.product|as_crispy_field}}
+                        </div>
+                        <div class="col-md-6">
+                            {{form.quantity|as_crispy_field}}
+                        </div>
+                        <hr>
+                        {% endfor %}
+
+                    </div>
+                
+                <button style="color: white;" type="submit" class="btn btn-primary"  >Tasdiqlash</button>
+            </form>
+        </div>
+    </div>
+   
+   
+{% endblock content %}

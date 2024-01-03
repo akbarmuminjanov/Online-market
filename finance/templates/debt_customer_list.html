@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+{% block title %}
+   Mijozlar qarzlari
+{% endblock title %}
+
+{% block content %}
+<div class="col-lg-12 grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Qarzlar ro'yxati</h4>
+        <p class="card-description">
+            Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quaerat voluptas sunt libero! Sit dolores, nemo accusamus ratione porro vitae quis quod illum laboriosam?
+        </p>
+        <div class="table-responsive">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>
+                  <b>T/r</b>
+                </th>
+                <th>
+                  Mijoz
+                </th>
+                <th>
+                  Qarz Miqdori
+                </th>
+                <th>
+                  To'langan qarz
+                </th>
+                <th>
+                  Ma'sul Shaxs
+                </th>
+                <th>
+                  Qarz olingan
+                </th>
+                <th>
+                  Oxirgi to'lov
+                </th>
+                <th>
+                  Ekshin
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for i in debts  %}
+              <tr {% if i.is_payed %} style="background-color: rgb(33, 231, 33);"  {% elif i.is_late %} style="background-color: rgb(255, 17, 0);" {% else %} style="background-color: yellow;" {% endif %}>
+                <td class="py-1">
+                  {{forloop.counter}}
+                </td>
+                <td class="py-1">
+                  {{i.customer.name}}
+                </td>
+                <td>
+                  {{i.amount}} so'm
+                </td>
+                <td>
+                  {{i.payed_amount}}
+                </td>
+                <td>
+                    {{i.user.get_full_name}}
+                </td>
+                <td>
+                  {{i.created}}
+                </td>
+                <td>
+                  {{i.updated}}
+                </td>
+                <td>
+                  <!-- Button trigger modal -->
+                  <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal{{forloop.counter}}">
+                    To'lash
+                </button>
+                </td>
+              </tr>
+              <!-- Modal -->
+              <div class="modal fade" id="modal{{forloop.counter}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-xl">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="exampleModalLabel">{{i.customer.name}}ning qarz ma'lumotlari</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form method="post">
+                    <div class="modal-body"> 
+                      <div class="modal-arrived_products">
+                        <h3> Ro'yhat </h3>
+                        <ul class=" container row list-group list-group-horizontal">
+                          <li class=" col-1 list-group-item"><b>No</b></li>
+                          <li class=" col-4 list-group-item"><b>Mahsulot</b></li>
+                          <li class=" col-2 list-group-item"><b>Miqdor</b></li>
+                          <li class=" col-2 list-group-item"><b>To'lov turi</b></li>
+                          <li class=" col-3 list-group-item"><b>Umumiy narxi</b></li>
+                        </ul>
+                        {% for a in i.customer.selledproduct_set.all %}
+                            <ul class=" container row list-group list-group-horizontal">
+                              <li class=" col-1 list-group-item">{{ forloop.counter }}</li>
+                              <li class=" col-4 list-group-item">{{a.product.name}}</li>
+                              <li class=" col-2 list-group-item"> {{a.quantity}}  {{a.product.type_of_measurement}}</li>
+                              <li class=" col-2 list-group-item"> {{a.get_type_of_price_display}}</li>
+                              {% if a.type_of_price == 'selling' %}
+                                  <li class=" col-3 list-group-item">{% widthratio a.quantity 1 a.product.selling_price %}</li>
+                              {% elif a.type_of_trade == 'actual' %}
+                                  <li class=" col-3 list-group-item">{% widthratio a.quantity 1 a.product.actual_price %}</li>
+                              {% else %}
+                                  <li class=" col-3 list-group-item">{% widthratio a.quantity 1 a.product.wholesale_price %}</li>
+                              {% endif %}
+                              
+                              </ul>
+                        {% endfor %}
+                      </div>
+                      <div class="modal-form-inputs">
+                        <h3 class="mt-4">To'lash</h3>
+                        {% if i.is_payed %}
+                            <p class="text-muted"> Qarz to'lab bo'lingan </p>
+                        {% else %}
+                        {% csrf_token %}
+                        <input required type="hidden" name="debt_id" value="{{i.id}}">
+                        <label for="amount">To'lanadigan summani kiriting</label>
+                        <input required max="{{i.amount}}" type="text" class="form-control" name="amount" placeholder="summani kiriting" value="{{i.amount}}">
+                        {% endif %}
+                        
+                      </div>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                      <button type="submit" class="btn btn-primary">To'lash</button>
+                    </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+              {% endfor %}
+            
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+{% endblock content %}

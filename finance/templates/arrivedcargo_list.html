@@ -1,0 +1,162 @@
+{% extends "base.html" %}
+{% block title %}
+    Kelgan mahsulotlar ro'yhati
+{% endblock title %}
+
+{% block content %}
+<div class="card mt-2">  
+  <div class="card-header">
+    <h4>Filterlash</h4>
+  </div>
+  
+    <div class="card-body">
+      <form method="get">
+        <div class="row">
+          <div class="col-2"> 
+            <label for="name">Ta'minotchi nomi</label>
+            <input value="{{name}}" id="name" class="form-control" type="text" name="name" placeholder="Taminotchi">
+          </div>
+          <div class="col-2">
+            <label for="type_of_trade">Savdo turi</label>
+            <select class="form-control" name="type_of_trade" id="type_of_trade">
+              {% if  type_of_trade == "cash" %}
+              <option value="">Hamamsi</option>
+              <option value="debt">Nasiya</option>
+              <option selected value="cash">Naqd</option>
+              {% elif type_of_trade == "debt" %}
+              <option value="">Hamamsi</option>
+              <option selected value="debt">Nasiya</option>
+              <option value="cash">Naqd</option>
+              {% else %}
+              <option selected value="">Hamamsi</option>
+              <option value="debt">Nasiya</option>
+              <option value="cash">Naqd</option>
+              {% endif %}
+            </select>
+          </div>
+          <div class="col-3">
+            <label for="start_date">Boshlanish sanasi</label>
+            <input value="{{start_date}}" id="start_date" class="form-control" type="date" name="start_date">
+          </div>
+  
+          <div class="col-3">
+            <label for="end_date">Tugash sanasi</label>
+            <input value="{{end_date}}" id="end_date" class="form-control" type="date" name="end_date" >
+          </div>
+          <div class="col-1">
+            <button class="btn btn-primary mt-4" >Qidirish</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+    <div class="card mt-4">
+      <div class="card-body">
+        <h4 class="card-title">Kelgan mahsulotlar</h4>
+        <p class="card-description">
+            Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quaerat voluptas sunt libero! Sit dolores, nemo accusamus ratione porro vitae quis quod illum laboriosam?
+        </p>
+        <div class="table-responsive">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>
+                  T/r
+                </th>
+                <th>
+                  Ta'minotchi
+                </th>
+                <th>
+                  Kelgan vaqti
+                </th>
+                <th>
+                  Savdo turi
+                </th>
+                <th>
+                  Qiymati
+                </th>
+                <th>
+                  Mahsulotlar soni
+                </th>
+                <th>
+                  Ekshin
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for i in arrivedcargos  %}
+              <tr>
+                <td class="py-1" >
+                  {{forloop.counter}}
+                </td>
+                <td class="py-1">
+                  {{i.supplier}}
+                </td>
+                <td>
+                  {{i.datetime}}
+                </td>
+                <td>
+                  {{i.get_type_of_trade_display}}
+                </td>
+                <td>
+                  {{i.amount}}
+                </td>
+                <td>
+                  {{i.arrived_products.all.count}}
+                </td>
+                <td>
+                    <!-- Button trigger modal -->
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal{{forloop.counter}}">
+                        Ma'lumotlar
+                    </button>
+
+
+                </td>
+              <tr>
+                    <!-- Modal -->
+                    <div class="modal fade" id="modal{{forloop.counter}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                      <div class="modal-dialog modal-xl">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">{{i.cargo.supplier}}ning qarz ma'lumotlari</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+                          <form method="post">
+                          <div class="modal-body"> 
+                            <div class="modal-arrived_products">
+                              <h3> Ro'yhat </h3>
+                              <ul class=" container row list-group list-group-horizontal">
+                                <li class=" col-1 list-group-item"><b>No</b></li>
+                                <li class=" col-4 list-group-item"><b>Mahsulot</b></li>
+                                <li class=" col-4 list-group-item"><b>Miqdor</b></li>
+                                <li class=" col-3 list-group-item"><b>Umumiy narxi</b></li>
+                              </ul>
+                              {% for a in i.arrived_products.all %}
+                                  <ul class=" container row list-group list-group-horizontal">
+                                    <li class=" col-1 list-group-item">{{ forloop.counter }}</li>
+                                    <li class=" col-4 list-group-item">{{a.product.name}}</li>
+                                    <li class=" col-4 list-group-item"> {{a.quantity}}  {{a.product.type_of_measurement}}</li>
+                                    <li class=" col-3 list-group-item">{% widthratio a.quantity 1 a.product.actual_price %}</li>
+                                    </ul>
+                              {% endfor %}
+                            </div>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                          </div>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+              {% endfor %}
+            
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+</div>
+</div>
+{% endblock content %}

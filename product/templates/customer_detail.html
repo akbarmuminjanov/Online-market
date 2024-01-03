@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% load crispy_forms_tags %}
+{% block title %}
+    {{customer.name}}ga sotilgan mahsulotlar
+{% endblock title %}
+
+{% block content %}
+    <div class="card">
+        <div class="card-header">
+           <h4>{{customer.name}}ga sotilgan mahsulotlar</h4>
+        </div>
+        <div class="card-body">
+            <div class="main-info">
+                <p><b>Mijozning ismi:</b> {{customer.name}}</p>
+
+                <p><b>Xarid turi:</b> {{customer.get_type_of_trade_display}}</p>
+    
+                <p><b>Sotuvchi:</b> {{customer.user.get_full_name}}</p>
+    
+                <p><b>Sana va Vaqt:</b> {{customer.datetime}}</p>
+    
+                <p><b>Umumiy Narx:</b> {{customer.amount}}</p>
+            </div>
+            <hr>
+            <div class="table-responsive">
+                <table class="table table-striped">
+                  <thead>
+                    <tr>
+                      <th>
+                        T/r
+                      </th>
+                      <th>
+                        Rasm
+                      </th>
+                      <th>
+                        Nomi
+                      </th>
+                      <th>
+                        Kategoriya
+                      </th>
+                      <th>
+                        Narx turi
+                      </th>
+                      <th>
+                        Soni
+                      </th>
+                      <th>
+                        Umumiy narxi
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for i in customer.selledproduct_set.all %}
+                    <tr>
+                        <td> {{forloop.counter}} </td>
+                        <td class="py-1">
+                          <img src="{{i.product.image.url}}" alt="{{i.name}}"/>
+                        </td>
+                        <td>
+                            <a href="{% url 'detail' i.product.id %}">{{i.product.name}}</a>
+                        </td>
+                        <td>
+                            {{i.product.category}}
+                        </td>
+                        <td>
+                            {{i.get_type_of_price_display}}
+                        </td>
+                        <td>
+                            {{i.quantity}}
+                        </td>
+                        <td>
+                            {% if i.type_of_price == 'selling' %}
+                                    {% widthratio i.quantity 1 i.product.selling_price %}
+                              {% elif i.type_of_trade == 'actual' %}
+                                    {% widthratio i.quantity 1 i.product.actual_price %}
+                              {% else %}
+                                    {% widthratio i.quantity 1 i.product.wholesale_price %}
+                              {% endif %}
+                        </td>
+                       
+                      </tr>
+                    {% endfor %}
+                   
+                  </tbody>
+                </table>
+              </div>
+        </div>
+    </div>
+{% endblock content %}

@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+
+{% load crispy_forms_tags %}
+{% block title %}
+    Mahsulotlar ro'yxati
+{% endblock title %}
+
+
+
+{% block content %}
+<div class="card mt-2">  
+  <div class="card-header">
+    <h4>Filterlash</h4>
+  </div>
+  
+    <div class="card-body">
+      <form method="get">
+        <div class="row">
+          <div class="col-3"> 
+            <input value="{{q}}" type="text" name="q" class="form-control" placeholder="Mahsulot nomi">
+          </div>
+  
+          <div class="col-3">
+            <select class="form-control" name="category" id="">
+              <option value="">Hammasi</option>
+  
+              {% for i in categories %}
+  
+              <option value="{{i.id}}">{{i.name}}</option>
+  
+              {% endfor %}
+            </select>
+          </div>
+  
+          <div class="col-3">
+            <button class="btn btn-outline-primary form-control" type="submit">Qidirish</button>
+          </div>
+          <div class="col-2">
+            <button id="export-btn" class="btn btn-secondary" type="button" >Excel</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+    <div class="card mt-2">
+        <div class="card-header">
+           <h4> Mahsulotlar ro'yxati</h4>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table id="export-table" class="table table-striped">
+                  <thead>
+                    <tr>
+                      <th>
+                        T/r
+                      </th>
+                      <th>
+                        Rasm
+                      </th>
+                      <th>
+                        Nomi
+                      </th>
+                      <th>
+                        Kategoriya
+                      </th>
+                      <th>
+                        Kelgan narxi
+                      </th>
+                      <th>
+                        Sotilish narxi
+                      </th>
+                      <th>
+                        Optom narxi
+                      </th>
+                      <th>
+                        Qolgan
+                      </th>
+                      <th>
+                        Qo'shilgan
+                      </th>
+                      <th>
+                        Ekshin
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for i in products %}
+                    <tr>
+                        <td> {{forloop.counter}} </td>
+                        <td class="py-1">
+                          <img src="{{i.image.url}}" alt="{{i.name}}"/>
+                        </td>
+                        <td>
+                            <a href="{% url 'detail' i.id %}">{{i.name}}</a>
+                        </td>
+                        <td>
+                            {{i.category}}
+                        </td>
+                        <td>
+                            {{i.actual_price}}
+                        </td>
+                        <td>
+                            {{i.selling_price}}
+                        </td>
+                        <td>
+                            {{i.wholesale_price}}
+                        </td>
+                        <td>
+                            {{i.quantity}}
+                        </td>
+                        <td>
+                            {{i.updated_at}}
+                        </td>
+                        <td>
+                          <a href="{% url 'update' i.id %}">Tahrirlash</a>
+                        </td>
+                       
+                      </tr>
+                    {% endfor %}
+                   
+                  </tbody>
+                </table>
+              </div>
+        </div>
+        <script src="https://cdn.sheetjs.com/xlsx-0.19.3/package/dist/xlsx.full.min.js"></script>
+        <script>
+          const exportButton = document.getElementById('export-btn');
+          const table = document.getElementById('export-table');
+
+          exportButton.addEventListener('click', () => {
+            /* Create worksheet from HTML DOM TABLE */
+            const wb = XLSX.utils.table_to_book(table, {sheet: 'mahsulotlar'});
+
+            /* Export to file (start a download) */
+            XLSX.writeFile(wb, 'Mahsulotlar.xlsx');
+          });
+        </script>
+    </div>
+{% endblock content %}
